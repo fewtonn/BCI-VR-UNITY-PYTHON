@@ -1,0 +1,9 @@
+PyQt5==5.15.10
+numpy==1.26.4
+scipy==1.12.0
+matplotlib==3.8.3
+pylsl==1.16.2
+pyzmq==25.1.2
+pandas==2.2.1
+tensorflow==2.15.0
+keras==2.15.0
