@@ -1,57 +1,43 @@
-BCI-VR-UNITY-PYTHON 🧠🕶️
+# BCI-VR-UNITY-PYTHON 🧠🎮
+
 Simulation of a Brain-Computer Interface (BCI) integrated with a Virtual Reality environment using Unity and Python communication.
 
-🎮 Unity VR Space
+### 🎮 Unity VR Space
 To access the 3D UNITY space and connect it to this controller, download the project file here:
 👉 [Download Unity BCI-VR Project](https://drive.google.com/file/d/1qv33TthXWdQOnMN3auH8BM6PIl_oNDcc/view?usp=sharing)
 
-🛠️ Data Pre-processing: Do .mat para OpenBCI CSV
-Além do controle em tempo real, este repositório contém scripts para converter datasets de pesquisa (formato MATLAB .mat) para o formato padrão do OpenBCI GUI. Isso permite que você treine seus modelos com dados históricos como se estivessem vindo diretamente do capacete.
+---
 
-Passo a Passo do Código de Conversão:
-O script realiza as seguintes etapas para garantir a compatibilidade dos dados:
+## 🚀 Funcionalidades Principais
 
-1. Configurações de Canais e Mapeamento
-O código define a origem dos dados (21 canais padrão de sistemas clínicos) e filtra apenas os 16 canais compatíveis com a placa OpenBCI Cyton + Daisy.
+### 1. BCI Control Center (Python)
+A interface principal desenvolvida em **PyQt5** que gerencia todo o fluxo:
+* **Conexão LSL (Lab Streaming Layer):** Recebe dados de hardware de EEG (OpenBCI, Cyton, etc).
+* **Visualização em Tempo Real:** Gráficos de Série Temporal (uVrms) e FFT (Frequência).
+* **IA e Aprendizado Online:** Carregamento de modelos `.h5` (Keras/TensorFlow) com suporte a **Transfer Learning** durante a sessão.
+* **Modo Simulação:** Gera sinais aleatórios para testar o Unity sem necessidade de hardware.
 
-Mapeamento de Classes: Converte os marcadores do dataset (ex: 1, 2, 3) para labels de processamento (0: Repouso, 1: Esquerda, 2: Direita).
+### 2. Comunicação de Baixa Latência
+O sistema utiliza uma arquitetura híbrida para conversar com o Unity:
+* **ZeroMQ (ZMQ):** Protocolo PUB/SUB para envio de comandos diretos (`LEFT`, `RIGHT`, `REST`).
+* **UDP Broadcast:** O Python espalha seu IP na rede local para que o Unity o encontre automaticamente, eliminando a necessidade de configurar IPs manualmente.
 
-2. Localização Automática de Sinais (encontrar_indices_automaticamente)
-Como arquivos .mat podem ter estruturas diferentes, esta função varre o arquivo procurando por:
+### 3. Conversor de Dados (Dataset .mat → OpenBCI)
+Um script dedicado para preparar dados de pesquisa para a sua rede neural:
+* **Filtragem de Canais:** Converte datasets clínicos (21 canais) para o padrão OpenBCI (16 canais).
+* **Extração de Épocas:** Recorta automaticamente os sinais baseando-se nos marcadores de evento do MATLAB.
+* **Formatação OpenBCI:** Gera um CSV idêntico ao exportado pelo OpenBCI GUI, facilitando o reuso de pipelines de treino.
 
-Matrizes que possuam entre 21 e 22 linhas (indicando canais de EEG).
+---
 
-Vetores com valores baixos (indicando os marcadores/eventos de cada tentativa).
+## 🛠️ Instalação e Configuração
 
-Valores escalares que representem a frequência de amostragem (Ex: 250Hz ou 200Hz).
+### Pré-requisitos
+Certifique-se de ter o Python 3.9+ instalado.
 
-3. Extração de Épocas (extrair_epocas_mat)
-O script percorre todos os arquivos de uma pasta, identifica onde um movimento começou (mudança no canal de marcadores) e recorta um "pedaço" do sinal (época) de tempo pré-definido (neste caso, 1 segundo após o estímulo).
+```bash
+# Clone o repositório
+git clone [https://github.com/SEU_USUARIO/BCI-VR-UNITY-PYTHON.git](https://github.com/SEU_USUARIO/BCI-VR-UNITY-PYTHON.git)
 
-4. Formatação Estilo OpenBCI (salvar_csv_openbci)
-Esta é a parte crucial para a compatibilidade. O script não apenas salva os números, mas reconstrói a estrutura de um arquivo gerado pelo software oficial do OpenBCI:
-
-Cabeçalho (Header): Adiciona as linhas de comentário %OpenBCI Raw EXG Data, %Sample Rate, etc.
-
-Colunas Extras: Cria colunas falsas de Acelerômetro, Canais Analógicos e Timestamps formatados, para que o leitor de CSV do seu modelo de IA não perceba a diferença entre um dado real e um dado convertido.
-
-5. Exportação de Labels
-Gera um arquivo labels_ordem.txt que serve como o "gabarito" para o treino da sua rede neural, indicando exatamente o que o usuário estava pensando em cada segundo do arquivo CSV gerado.
-
-🚀 Como usar a conversão
-Coloque seus arquivos .mat na pasta configurada em DIRETORIO_RAIZ.
-
-Execute o script de conversão.
-
-Use o arquivo ARQUVOOPENBCI_16CANAIS.csv resultante no seu pipeline de treinamento ou simulação de sinal.
-
-Dica para o seu projeto:
-Ao subir o código para o GitHub, você pode organizar assim:
-
-main.py: O código da interface BCI (que você me enviou antes).
-
-converter_mat_to_csv.py: Este novo código de processamento.
-
-requirements.txt: Com as bibliotecas que adicionamos hoje (scipy e pandas).
-
-Deseja que eu ajude a criar uma pequena "Wiki" dentro do README explicando como configurar o IP do Unity para que ele receba os comandos do Python sem erro?
+# Instale as dependências
+pip install pyqt5 numpy scipy matplotlib pylsl pyzmq pandas tensorflow keras
