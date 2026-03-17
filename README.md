@@ -35,6 +35,8 @@ Um script dedicado para preparar dados de pesquisa para a sua rede neural:
 ### Pré-requisitos
 Certifique-se de ter o Python 3.9+ instalado.
 
+### OBSERVAÇÃO
+Arquivo teste_without_openbci é uma atualização em andamento um código que não necessita do openbci para funcionar, o qual proporciona que o código rode com maior leveza e menos inputlag
 ```bash
 # Clone o repositório
 git clone [https://github.com/SEU_USUARIO/BCI-VR-UNITY-PYTHON.git](https://github.com/SEU_USUARIO/BCI-VR-UNITY-PYTHON.git)
